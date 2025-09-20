@@ -58,6 +58,6 @@ After completing the quiz, the result is shown and the overall quiz leaderboard 
 
 #### external resources
 
-Quiz questions are taken from Open Trivia Database https://opentdb.com
-sample curl: https://opentdb.com/api.php?amount=3&difficulty=easy
+Quiz questions are taken from Open Trivia Database https://opentdb.com <br>
+Sample curl: https://opentdb.com/api.php?amount=3&difficulty=easy
 
