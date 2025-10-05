@@ -17,12 +17,15 @@ After completing the quiz, the result is shown and the overall quiz leaderboard 
   medium,
   and 3 for hard) into the database.
 
-- POST /api/quiz/check/{playerName} <br>
+- POST /api/quiz/check <br>
   Receives the player's answers, checks them for correctness, and returns the player's overall quiz score.
   Saves it into the database.
 
-- GET /api/leaderboard <br>
+- GET /api/leaderboard?leadersNum={5} <br>
   Returns the current top 5 players leaderboard - player name, total score, and their place on the leaderboard.
+
+- GET /api/leaderboard/{playerName} <br>
+  Returns the current total score and place on the leaderboard for specified player.
 
 2. Implement javascript frontend with pages (see front/prototype/capstone-ui-prototype.png):
 
@@ -46,7 +49,7 @@ After completing the quiz, the result is shown and the overall quiz leaderboard 
 
 #### backend
 
-- java spring, jdbc
+- java spring, jdbc template
 - postgres
 - rest api
 
