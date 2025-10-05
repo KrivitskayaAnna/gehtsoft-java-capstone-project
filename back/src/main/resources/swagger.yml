@@ -1,0 +1,159 @@
+openapi: 3.0.4
+info:
+  title: Swagger Quiz Game - OpenAPI 3.0
+  version: 1.0.12
+tags:
+  - name: quiz
+    description: Info on quiz
+  - name: leaderboard
+    description: Leaderboard top players
+paths:
+  /api/quiz:
+    get:
+      tags:
+        - quiz
+      summary: Get questions with answer variants
+      parameters:
+        - name: questionsLevel
+          in: query
+          description: quiz questions' hardness level
+          required: true
+          explode: true
+          schema:
+            type: string
+            default: easy
+            enum:
+              - easy
+              - medium
+              - hard
+        - name: questionsNum
+          in: query
+          description: quiz questions number
+          required: true
+          schema:
+            type: integer
+            default: 2
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                - question: What is your age?
+                  questionId: 29
+                  answers:
+                    - '24'
+                    - '20'
+                    - '40'
+                - question: What is your name?
+                  questionId: 30
+                  answers:
+                    - Ann
+                    - June
+                    - July
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+      security:
+        - bearerAuth: []
+  /api/quiz/check:
+    post:
+      tags:
+        - quiz
+      summary: Check user's answers on quiz
+      requestBody:
+        description: Post user's answers
+        content:
+          application/json:
+            example:
+              playerName: Ann
+              answers:
+                - questionId: 29
+                  answerIdx: 3
+                - questionId: 30
+                  answerIdx: 2
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                totalScore: 4
+                correctQuestionIds:
+                  - 30
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal server error
+      security:
+        - bearerAuth: []
+  /api/leaderboard:
+    get:
+      tags:
+        - leaderboard
+      summary: Get top leaderboard
+      parameters:
+        - name: leadersNum
+          in: query
+          description: Num of leaders to return
+          required: true
+          schema:
+            type: integer
+            default: 3
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              example:
+                - playerName: Ann
+                  totalScore: 20
+                  leaderBoardPlace: 1
+                - playerName: Ann1
+                  totalScore: 18
+                  leaderBoardPlace: 2
+                - playerName: Ann2
+                  totalScore: 13
+                  leaderBoardPlace: 3
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal server error
+      security:
+        - bearerAuth: []
+  /api/leaderboard/{playerName}:
+    get:
+      tags:
+        - leaderboard
+      summary: Get leaderboard info on specific player
+      parameters:
+        - name: playerName
+          in: path
+          description: Player name
+          required: true
+          schema:
+            type: string
+            default: Ann
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              example:
+                playerName: Ann3
+                totalScore: 5
+                leaderBoardPlace: 39
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal server error
+      security:
+        - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
