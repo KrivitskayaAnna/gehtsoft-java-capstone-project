@@ -64,3 +64,38 @@ After completing the quiz, the result is shown and the overall quiz leaderboard 
 Quiz questions are taken from Open Trivia Database https://opentdb.com <br>
 Sample curl: https://opentdb.com/api.php?amount=3&difficulty=easy
 
+#### backend local curls
+
+1) GET /api/quiz
+curl -X 'GET' \
+   'http://localhost:8080/api/quiz?questionsLevel=easy&questionsNum=2' \
+   -H 'accept: application/json'
+
+2) POST /api/quiz/check
+curl -X 'POST' \
+   'http://localhost:8080/api/quiz/check' \
+   -H 'accept: application/json' \
+   -H 'Content-Type: application/json' \
+   -d '{
+   "playerName": "Ann",
+   "answers": [
+   {
+   "questionId": 29,
+   "answerIdx": 3
+   },
+   {
+   "questionId": 30,
+   "answerIdx": 2
+   }
+   ]
+   }'
+
+3) GET /api/leaderboard
+curl -X 'GET' \
+   'http://localhost:8080/api/leaderboard?leadersNum=3' \
+   -H 'accept: application/json'
+
+4) GET /api/leaderboard/{playerName}
+ curl -X 'GET' \
+   'http://localhost:8080/api/leaderboard/Ann' \
+   -H 'accept: application/json'
