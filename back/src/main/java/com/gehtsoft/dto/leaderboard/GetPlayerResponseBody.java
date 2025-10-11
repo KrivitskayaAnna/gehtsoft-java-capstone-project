@@ -1,4 +1,4 @@
-package com.gehtsoft.model.leaderboard;
+package com.gehtsoft.dto.leaderboard;
 
 public class GetPlayerResponseBody {
 }

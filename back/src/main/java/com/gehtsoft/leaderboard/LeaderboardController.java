@@ -1,6 +1,6 @@
 package com.gehtsoft.leaderboard;
 
-import com.gehtsoft.model.leaderboard.GetLeaderboardResponseBody;
+import com.gehtsoft.dto.leaderboard.GetLeaderboardResponseBody;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

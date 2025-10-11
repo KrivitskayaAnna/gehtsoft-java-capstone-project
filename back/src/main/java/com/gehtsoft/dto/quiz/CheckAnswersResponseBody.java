@@ -1,4 +1,4 @@
-package com.gehtsoft.model.quiz;
+package com.gehtsoft.dto.quiz;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

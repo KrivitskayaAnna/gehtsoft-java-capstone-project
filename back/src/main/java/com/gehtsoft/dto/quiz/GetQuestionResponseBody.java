@@ -1,4 +1,4 @@
-package com.gehtsoft.model.quiz;
+package com.gehtsoft.dto.quiz;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +9,6 @@ import java.util.List;
 @AllArgsConstructor
 public class GetQuestionResponseBody {
     private String question;
-    private int questionId;
+    private long questionId;
     private List<String> answers;
 }

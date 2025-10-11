@@ -1,4 +1,4 @@
-package com.gehtsoft.model.leaderboard;
+package com.gehtsoft.dto.leaderboard;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
