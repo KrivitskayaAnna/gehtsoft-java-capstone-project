@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine # Using a specific version for stability and a lightweight image
+    restart: always
+    environment:
+      POSTGRES_DB: postgres # The name of the database to create
+      POSTGRES_USER: postgres # The database user
+      POSTGRES_PASSWORD: postgres # The password for the database user
+    ports:
+      - "5432:5432" # Maps host port 5432 to container port 5432
+    volumes:
+      - ./back/src/main/resources/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
