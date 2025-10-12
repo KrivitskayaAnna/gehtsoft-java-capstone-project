@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Game - Playing</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><span id="playerNickname"></span>, answer the questions!</h1>
+            <div class="quiz-info">
+                <p>Questions number: <span id="totalQuestions"></span> | Difficulty: <span id="quizDifficulty"></span></p>
+            </div>
+        </header>
+
+        <main>
+            <form id="quizAnswersForm" class="quiz-answers-form">
+                <div id="questionsContainer" class="questions-container">
+                    <!-- Questions will be dynamically inserted here -->
+                </div>
+
+                <div class="quiz-actions">
+                    <button type="submit" class="submit-btn" id="submitQuizBtn">
+                        submit
+                    </button>
+                </div>
+            </form>
+
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>Loading questions...</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="quiz.js"></script>
+</body>
+</html>
