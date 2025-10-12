@@ -80,6 +80,7 @@ paths:
           content:
             application/json:
               example:
+                maxScore: 6
                 totalScore: 4
                 correctQuestionIds:
                   - 30

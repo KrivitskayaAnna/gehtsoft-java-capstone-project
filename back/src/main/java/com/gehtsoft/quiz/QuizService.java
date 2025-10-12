@@ -49,6 +49,10 @@ public class QuizService {
         Map<Long, QuestionDbEntity> dbQuestions = questionRepository.getByIds(questionIds)
                 .stream()
                 .collect(Collectors.toMap(QuestionDbEntity::getQuestionId, Function.identity()));
+        int maxScore = dbQuestions.values()
+                .stream()
+                .mapToInt(QuestionDbEntity::getCorrectAnswerScore)
+                .sum();
         List<CheckAnswersRequestBody.Answer> correctAnswers = postAnswers.getAnswers()
                 .stream()
                 .filter(p -> {
@@ -64,6 +68,6 @@ public class QuizService {
                 .map(CheckAnswersRequestBody.Answer::getQuestionId)
                 .toList();
         resultRepository.save(new ResultDbEntity(postAnswers.getPlayerName(), totalScore));
-        return new CheckAnswersResponseBody(totalScore, correctAnswerIds);
+        return new CheckAnswersResponseBody(maxScore, totalScore, correctAnswerIds);
     }
 }
