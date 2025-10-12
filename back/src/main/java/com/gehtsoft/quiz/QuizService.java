@@ -1,24 +1,26 @@
 package com.gehtsoft.quiz;
 
 import com.gehtsoft.db.QuestionRepository;
+import com.gehtsoft.db.ResultRepository;
 import com.gehtsoft.db.model.QuestionDbEntity;
-import com.gehtsoft.dto.quiz.GetQuestionResponseBody;
-import com.gehtsoft.dto.quiz.OpenDbResponseBody;
-import com.gehtsoft.dto.quiz.QuestionLevel;
+import com.gehtsoft.db.model.ResultDbEntity;
+import com.gehtsoft.dto.quiz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class QuizService {
     @Autowired
     private QuestionRepository questionRepository;
-//
-//    @Autowired
-//    private ResultRepository resultRepository;
+
+    @Autowired
+    private ResultRepository resultRepository;
 
     @Autowired
     private OpenDbClient openDbClient;
@@ -41,9 +43,27 @@ public class QuizService {
         return questions;
     }
 
-//    public CheckAnswersResponseBody checkAnswers(CheckAnswersRequestBody postAnswers)
-//            throws SQLException {
-//        CheckAnswersResponseBody checkResponse = new CheckAnswersResponseBody(4, List.of(30)); //TODO
-//        return ResponseEntity.status(HttpStatus.OK).body(checkResponse);
-//    }
+    public CheckAnswersResponseBody checkAnswers(CheckAnswersRequestBody postAnswers) {
+        List<Long> questionIds = postAnswers.getAnswers().stream()
+                .map(CheckAnswersRequestBody.Answer::getQuestionId).toList();
+        Map<Long, QuestionDbEntity> dbQuestions = questionRepository.getByIds(questionIds)
+                .stream()
+                .collect(Collectors.toMap(QuestionDbEntity::getQuestionId, Function.identity()));
+        List<CheckAnswersRequestBody.Answer> correctAnswers = postAnswers.getAnswers()
+                .stream()
+                .filter(p -> {
+                    QuestionDbEntity entity = dbQuestions.get(p.getQuestionId());
+                    return entity != null && p.getAnswerIdx() == entity.getCorrectAnswerIdx();
+                }).toList();
+        int totalScore = correctAnswers
+                .stream()
+                .mapToInt(p -> dbQuestions.get(p.getQuestionId()).getCorrectAnswerScore())
+                .sum();
+        List<Long> correctAnswerIds = correctAnswers
+                .stream()
+                .map(CheckAnswersRequestBody.Answer::getQuestionId)
+                .toList();
+        resultRepository.save(new ResultDbEntity(postAnswers.getPlayerName(), totalScore));
+        return new CheckAnswersResponseBody(totalScore, correctAnswerIds);
+    }
 }

@@ -1,5 +1,6 @@
 package com.gehtsoft.dto.quiz;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.List;
@@ -10,8 +11,8 @@ public class CheckAnswersRequestBody {
     private List<Answer> answers;
 
     @Data
-    private static class Answer {
-        private int questionId;
+    public static class Answer {
+        private Long questionId;
         private int answerIdx;
     }
 }

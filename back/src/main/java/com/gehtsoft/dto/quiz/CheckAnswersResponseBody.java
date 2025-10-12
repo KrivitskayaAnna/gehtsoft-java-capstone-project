@@ -9,5 +9,5 @@ import java.util.List;
 @AllArgsConstructor
 public class CheckAnswersResponseBody {
     private int totalScore;
-    private List<Integer> correctQuestionIds;
+    private List<Long> correctQuestionIds;
 }

@@ -5,12 +5,10 @@ import com.gehtsoft.dto.quiz.CheckAnswersResponseBody;
 import com.gehtsoft.dto.quiz.GetQuestionResponseBody;
 import com.gehtsoft.dto.quiz.QuestionLevel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -25,8 +23,7 @@ public class QuizController {
     }
 
     @PostMapping("/check")
-    public ResponseEntity<CheckAnswersResponseBody> checkAnswers(@RequestBody CheckAnswersRequestBody postAnswers) throws SQLException {
-        CheckAnswersResponseBody checkResponse = new CheckAnswersResponseBody(4, List.of(30)); //TODO
-        return ResponseEntity.status(HttpStatus.OK).body(checkResponse);
+    public ResponseEntity<CheckAnswersResponseBody> checkAnswers(@RequestBody CheckAnswersRequestBody postAnswers) {
+        return ResponseEntity.ok(quizService.checkAnswers(postAnswers));
     }
 }

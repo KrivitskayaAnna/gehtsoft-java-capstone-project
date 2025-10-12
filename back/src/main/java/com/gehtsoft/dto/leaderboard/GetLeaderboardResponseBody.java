@@ -7,6 +7,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class GetLeaderboardResponseBody {
     private String playerName;
-    private int totalScore;
+    private long totalScore;
     private int leaderBoardPlace;
 }

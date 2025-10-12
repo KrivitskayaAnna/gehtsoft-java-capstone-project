@@ -8,7 +8,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResultDbEntity {
-    private long gameId;
+    private int leaderBoardRank;
     private String playerName;
-    private int resultScore;
+    private long resultScore;
+
+    public ResultDbEntity(String playerName, long resultScore) {
+        this.playerName = playerName;
+        this.resultScore = resultScore;
+    }
 }
