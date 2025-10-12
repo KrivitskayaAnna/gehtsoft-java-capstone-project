@@ -8,6 +8,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class CheckAnswersResponseBody {
+    private int maxScore;
     private int totalScore;
     private List<Long> correctQuestionIds;
 }
