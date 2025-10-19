@@ -212,11 +212,6 @@ class QuizPage {
     }
   }
 
-  getCsrfTokenFromCookie(csrf_resp) {
-    const match = csrf_resp.match(/CSRF Token: ([^,]+)/);
-    return match ? match[1].trim() : null;
-  }
-
   async sendAnswersToBackend(submissionData) {
     //Делаем предварительный запрос для установки CSRF токена в куках
     const csrf_response = await fetch("/api/quiz/csrf", {
