@@ -59,10 +59,12 @@ After completing the quiz, the result is shown and the overall quiz leaderboard 
 
 #### external resources
 
-Quiz questions are taken from Open Trivia Database https://opentdb.com <br>
-Sample curl: https://opentdb.com/api.php?amount=3&difficulty=easy
+Quiz questions are originally taken from Open Trivia Database https://opentdb.com <br>
 
 #### backend local curls
+
+0) Swagger
+Available at http://localhost:8080/swagger-ui/index.html
 
 1) GET /api/quiz
 curl -X 'GET' \
@@ -104,4 +106,4 @@ curl -X 'GET' \
 - npm install express cors http-proxy-middleware
 - node server.js
 
-2) go to http://localhost:3000/form_page/form.html
+2) go to http://localhost:3001/form_page/form.html

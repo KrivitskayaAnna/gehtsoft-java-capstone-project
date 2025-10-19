@@ -10,5 +10,5 @@ import java.util.List;
 public class CheckAnswersResponseBody {
     private int maxScore;
     private int totalScore;
-    private List<Long> correctQuestionIds;
+    private List<Integer> correctQuestionIds;
 }

@@ -1,14 +1,19 @@
 package com.gehtsoft.quiz;
 
+import com.gehtsoft.db.DataRepository;
 import com.gehtsoft.db.QuestionRepository;
 import com.gehtsoft.db.ResultRepository;
+import com.gehtsoft.db.model.DataDbEntity;
 import com.gehtsoft.db.model.QuestionDbEntity;
 import com.gehtsoft.db.model.ResultDbEntity;
-import com.gehtsoft.dto.quiz.*;
+import com.gehtsoft.dto.quiz.CheckAnswersRequestBody;
+import com.gehtsoft.dto.quiz.CheckAnswersResponseBody;
+import com.gehtsoft.dto.quiz.GetQuestionResponseBody;
+import com.gehtsoft.dto.quiz.QuestionLevel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
+import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -23,30 +28,34 @@ public class QuizService {
     private ResultRepository resultRepository;
 
     @Autowired
-    private OpenDbClient openDbClient;
+    private DataRepository dataRepository;
 
-    public Mono<List<GetQuestionResponseBody>> getQuestions(
+    public List<GetQuestionResponseBody> getQuestions(
             QuestionLevel questionsLevel,
             int questionsNum
     ) {
-        //TODO: batch insert questions to db
-        Mono<OpenDbResponseBody> response = openDbClient.getQuestions(questionsLevel, questionsNum);
-        Mono<List<GetQuestionResponseBody>> questions =
-                response.map(p -> p.getResults().stream().map(q -> {
+        List<DataDbEntity> response = dataRepository.getRandomN(questionsNum, questionsLevel);
+        List<AbstractMap.SimpleEntry<QuestionDbEntity, GetQuestionResponseBody>> entities =
+                response.stream().map(q -> {
                             List<Map.Entry<Integer, String>> mixedAnswers = QuestionDbEntity.randomizeCorrectAnswer(q);
                             int correctAnswerIdx = mixedAnswers.stream().map(Map.Entry::getKey).toList().indexOf(0);
-                            long questionIdx = questionRepository.save(new QuestionDbEntity(q.getQuestion(), correctAnswerIdx, questionsLevel));
+                            int questionIdx = q.getId();
                             List<String> answers = mixedAnswers.stream().map(Map.Entry::getValue).toList();
-                            return new GetQuestionResponseBody(q.getQuestion(), questionIdx, answers);
+                            return new AbstractMap.SimpleEntry<>(
+                                    new QuestionDbEntity(questionIdx, correctAnswerIdx, questionsLevel),
+                                    new GetQuestionResponseBody(q.getQuestion(), questionIdx, answers)
+                            );
                         }
-                ).toList());
-        return questions;
+                ).toList();
+        List<QuestionDbEntity> questionEntities = entities.stream().map(AbstractMap.SimpleEntry::getKey).toList();
+        questionRepository.save(questionEntities);
+        return entities.stream().map(AbstractMap.SimpleEntry::getValue).toList();
     }
 
     public CheckAnswersResponseBody checkAnswers(CheckAnswersRequestBody postAnswers) {
-        List<Long> questionIds = postAnswers.getAnswers().stream()
+        List<Integer> questionIds = postAnswers.getAnswers().stream()
                 .map(CheckAnswersRequestBody.Answer::getQuestionId).toList();
-        Map<Long, QuestionDbEntity> dbQuestions = questionRepository.getByIds(questionIds)
+        Map<Integer, QuestionDbEntity> dbQuestions = questionRepository.getByIds(questionIds)
                 .stream()
                 .collect(Collectors.toMap(QuestionDbEntity::getQuestionId, Function.identity()));
         int maxScore = dbQuestions.values()
@@ -63,7 +72,7 @@ public class QuizService {
                 .stream()
                 .mapToInt(p -> dbQuestions.get(p.getQuestionId()).getCorrectAnswerScore())
                 .sum();
-        List<Long> correctAnswerIds = correctAnswers
+        List<Integer> correctAnswerIds = correctAnswers
                 .stream()
                 .map(CheckAnswersRequestBody.Answer::getQuestionId)
                 .toList();

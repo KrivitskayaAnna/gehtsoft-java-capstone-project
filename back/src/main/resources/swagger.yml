@@ -1,4 +1,4 @@
-openapi: 3.0.4
+swagger: "2.0"
 info:
   title: Swagger Quiz Game - OpenAPI 3.0
   version: 1.0.12

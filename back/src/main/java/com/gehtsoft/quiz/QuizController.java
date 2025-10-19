@@ -7,7 +7,6 @@ import com.gehtsoft.dto.quiz.QuestionLevel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -18,8 +17,8 @@ public class QuizController {
     private QuizService quizService;
 
     @GetMapping
-    public Mono<List<GetQuestionResponseBody>> getQuestions(@RequestParam("questionsLevel") QuestionLevel questionsLevel, @RequestParam("questionsNum") int questionsNum) {
-        return quizService.getQuestions(questionsLevel, questionsNum);
+    public ResponseEntity<List<GetQuestionResponseBody>> getQuestions(@RequestParam("questionsLevel") QuestionLevel questionsLevel, @RequestParam("questionsNum") int questionsNum) {
+        return ResponseEntity.ok(quizService.getQuestions(questionsLevel, questionsNum));
     }
 
     @PostMapping("/check")
