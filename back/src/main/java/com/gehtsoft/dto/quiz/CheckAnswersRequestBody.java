@@ -12,7 +12,7 @@ public class CheckAnswersRequestBody {
 
     @Data
     public static class Answer {
-        private Long questionId;
+        private int questionId;
         private int answerIdx;
     }
 }

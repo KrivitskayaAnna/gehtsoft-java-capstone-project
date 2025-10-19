@@ -12,6 +12,7 @@ services:
       - "5432:5432"
     volumes:
       - ./back/src/main/resources/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+      - ./back/src/main/resources/opentdb_data.json:/data/opentdb_data.json
     networks:
       - app-network
   elasticsearch:
