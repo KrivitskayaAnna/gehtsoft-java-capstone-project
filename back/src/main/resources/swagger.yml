@@ -8,6 +8,17 @@ tags:
   - name: leaderboard
     description: Leaderboard top players
 paths:
+  /api/quiz/csrf:
+    get:
+      tags:
+        - csrf
+      summary: Get csrf token
+      responses:
+        '200':
+          description: Success
+          content:
+            plain/text:
+              example: 'L9U8QANcoANApPu9bzOJQOCGnLDvRwQxTi1CF2iQokpm6sPCFucPIjM-w2Vtws6LWR69I9ewsdHbcTAcKxpydVyjlXJS0vWm'
   /api/quiz:
     get:
       tags:
