@@ -1,0 +1,22 @@
+{
+    "name": "quiz-game-frontend",
+    "version": "1.0.0",
+    "description": "Frontend server for quiz game",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js",
+        "dev": "node server.js"
+    },
+    "dependencies": {
+        "cors": "^2.8.5",
+        "express": "^4.21.2",
+        "http-proxy-middleware": "^2.0.9"
+    },
+    "keywords": [
+        "quiz",
+        "game",
+        "frontend"
+    ],
+    "author": "Your Name",
+    "license": "MIT"
+}

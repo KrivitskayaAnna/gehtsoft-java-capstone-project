@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./back/src/main/resources/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+      - ./back/src/main/resources/opentdb_data.json:/data/opentdb_data.json
+    networks:
+      - app-network
+  elasticsearch:
+    image: elasticsearch:8.11.0
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+    ports:
+      - "9200:9200"
+    networks:
+      - app-network
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin1
+      - GF_SECURITY_ADMIN_PASSWORD=admin1
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./back/src/main/resources/grafana/provisioning:/etc/grafana/provisioning
+      - ./back/src/main/resources/grafana/dashboards:/etc/grafana/dashboards
+    networks:
+      - app-network
+  logstash:
+    image: logstash:8.19.5
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./back/src/main/resources/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    depends_on:
+      - elasticsearch
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
