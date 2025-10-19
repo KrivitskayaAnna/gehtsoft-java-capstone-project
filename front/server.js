@@ -4,7 +4,7 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 const path = require("path");
 
 const app = express();
-const PORT = 3002;
+const PORT = 3001;
 
 // Enable CORS for all routes
 app.use(cors());
