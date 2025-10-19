@@ -21,8 +21,8 @@ After completing the quiz, the result is shown and the overall quiz leaderboard 
   Receives the player's answers, checks them for correctness, and returns the player's overall quiz score.
   Saves it into the database.
 
-- GET /api/leaderboard?leadersNum={5} <br>
-  Returns the current top 5 players leaderboard - player name, total score, and their place on the leaderboard.
+- GET /api/leaderboard?leadersNum={3} <br>
+  Returns the current top-3 players leaderboard - player name, total score, and their place on the leaderboard.
 
 - GET /api/leaderboard/{playerName} <br>
   Returns the current total score and place on the leaderboard for specified player.
@@ -31,7 +31,7 @@ After completing the quiz, the result is shown and the overall quiz leaderboard 
 
 - quiz starter page <br>
   Contains a form that a player should fill in to start the game:
-  playerName (English alphabet and numbers), questionsNum (1 to 10), questionsLevel (easy/medium/hard)
+  playerName (English alphabet and numbers), questionsNum (1 to 100), questionsLevel (easy/medium/hard)
 
 - quiz page <br>
   The page the player is redirected to after submitting the starter form.
@@ -40,9 +40,7 @@ After completing the quiz, the result is shown and the overall quiz leaderboard 
   There is also a button "go to the leaderboard".
 
 - leaderboard page <br>
-  The final page the player is taken to after clicking "go to the leaderboard" showing the top 5 players ordered by
-  their
-  total score in all games.
+  The final page the player is taken to after clicking "go to the leaderboard" showing the top 3 players ordered by their total score in all games and current player's position (if current player is not in the top-3).
   There is also a button "start new quiz" that redirects the player to the starter page.
 
 ### Stack
@@ -99,3 +97,11 @@ curl -X 'GET' \
  curl -X 'GET' \
    'http://localhost:8080/api/leaderboard/Ann' \
    -H 'accept: application/json'
+
+#### frontend launch
+1) execute from front sub-directory:
+- npm init -y
+- npm install express cors http-proxy-middleware
+- node server.js
+
+2) go to http://localhost:3000/form_page/form.html

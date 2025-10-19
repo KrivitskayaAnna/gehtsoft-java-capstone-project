@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Game - Leaderboard</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Here is a leaderboard!</h1>
+        </header>
+
+        <main>
+            <div class="leaderboard-container">
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Loading leaderboard...</p>
+                </div>
+                
+                <div id="leaderboardContent" class="hidden">
+                    <div class="top-players-section">
+                        <h2>🏆 Top 3 Players</h2>
+                        <div class="leaderboard-list" id="topLeadersList">
+                            <!-- Top 3 leaders will be populated here -->
+                        </div>
+                    </div>
+
+                    <div class="current-player-section hidden" id="currentPlayerSection">
+                        <h2>🎯 Your Position</h2>
+                        <div class="leaderboard-list" id="currentPlayerList">
+                            <!-- Current player's position will be shown here -->
+                        </div>
+                    </div>
+
+                    <div class="no-player-data hidden" id="noPlayerData">
+                        <p>Play a game to see your position on the leaderboard!</p>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button onclick="window.location.href='../form_page/form.html'" type="submit" class="submit-btn" id="submitQuizBtn">
+                            start new quiz
+                        </button>
+                    </div>
+                </div>
+
+                <div id="errorMessage" class="error-message hidden">
+                    <p>Failed to load leaderboard. Please try again later.</p>
+                    <button onclick="window.location.href='../form_page/form.html'" class="secondary-btn">
+                        Go Home
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="leaderboard.js"></script>
+</body>
+</html>
