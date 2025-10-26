@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +36,19 @@ class LeaderboardControllerSpec {
         GetLeaderboardResponseBody player2 = new GetLeaderboardResponseBody("Ann2", 9, 2);
         GetLeaderboardResponseBody player3 = new GetLeaderboardResponseBody("Ann3", 3, 3);
         List<GetLeaderboardResponseBody> expectedLeaderboard = Arrays.asList(player1, player2, player3);
+        when(leaderboardService.getTopLeaderboard(leadersNum)).thenReturn(expectedLeaderboard);
+
+        ResponseEntity<List<GetLeaderboardResponseBody>> response = leaderboardController.getLeaderboard(leadersNum);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(expectedLeaderboard);
+        verify(leaderboardService).getTopLeaderboard(leadersNum);
+    }
+
+    @Test
+    void returnLotOfLeaderboardPlayers() {
+        int leadersNum = 39_999_999; //out of memory for more
+        List<GetLeaderboardResponseBody> expectedLeaderboard = createLargeLeaderboard(leadersNum);
         when(leaderboardService.getTopLeaderboard(leadersNum)).thenReturn(expectedLeaderboard);
 
         ResponseEntity<List<GetLeaderboardResponseBody>> response = leaderboardController.getLeaderboard(leadersNum);
@@ -78,5 +92,15 @@ class LeaderboardControllerSpec {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEmpty();
+    }
+
+    private List<GetLeaderboardResponseBody> createLargeLeaderboard(int count) {
+        List<GetLeaderboardResponseBody> leaders = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            leaders.add(
+                    new GetLeaderboardResponseBody("Ann" + i, 10, i)
+            );
+        }
+        return leaders;
     }
 }
