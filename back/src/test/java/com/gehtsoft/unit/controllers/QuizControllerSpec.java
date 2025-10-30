@@ -131,7 +131,7 @@ class QuizControllerSpec {
 
     @Test
     void checkLotOfQuestions() {
-        int questionCount = 69_999_999; //out of memory for more
+        int questionCount = 19_999_999; //out of memory for more
         CheckAnswersRequestBody largeRequest = createLargeCheckRequest(questionCount);
         CheckAnswersResponseBody largeResponse = createLargeCheckResponse(questionCount);
 

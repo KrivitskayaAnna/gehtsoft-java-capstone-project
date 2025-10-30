@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -87,7 +88,9 @@ class QuizServiceSpec {
                 new DataDbEntity(1, "Lala", "hard", "first",
                         incorrectAnswers
                 ));
+        QuestionDbEntity insertedQuestion = new QuestionDbEntity(1, 1, 1, 2);
         when(dataRepository.getRandomN(questionsNum, questionLevel)).thenReturn(data);
+        when(questionRepository.save(any(QuestionDbEntity.class))).thenReturn(insertedQuestion);
 
         List<GetQuestionResponseBody> questions = quizService.getQuestions(questionLevel, questionsNum);
 
@@ -108,15 +111,16 @@ class QuizServiceSpec {
         DataDbEntity question1 = new DataDbEntity(1, "Lala", "hard", "first",
                 incorrectAnswers
         );
+        QuestionDbEntity insertedQuestion = new QuestionDbEntity(1, 1, 1, 2);
         DataDbEntity question2 = SerializationUtils.clone(question1);
         question2.setId(2);
         List<DataDbEntity> data = List.of(question1, question2);
         when(dataRepository.getRandomN(questionsNum, questionLevel)).thenReturn(data);
-
+        when(questionRepository.save(any(QuestionDbEntity.class))).thenReturn(insertedQuestion);
         List<GetQuestionResponseBody> questions = quizService.getQuestions(questionLevel, questionsNum);
 
         assertThat(questions).hasSize(2);
-        assertThat(questions.stream().map(GetQuestionResponseBody::getQuestionId)).hasSameElementsAs(List.of(1L, 2L));
+        assertThat(questions.stream().map(GetQuestionResponseBody::getQuestionId)).hasSameElementsAs(List.of(1L, 1L));
         verify(dataRepository).getRandomN(questionsNum, questionLevel);
     }
 
@@ -139,8 +143,8 @@ class QuizServiceSpec {
     void checkShouldNotScoreUnknownQuestions() {
         List<Integer> questionIds = List.of(1);
         List<QuestionDbEntity> questions = List.of(
-                new QuestionDbEntity(2, 3, 1),
-                new QuestionDbEntity(3, 2, 0)
+                new QuestionDbEntity(0, 2, 3, 1),
+                new QuestionDbEntity(2, 3, 2, 0)
         );
         when(questionRepository.getByIds(questionIds)).thenReturn(questions);
 
@@ -159,9 +163,9 @@ class QuizServiceSpec {
     void checkShouldSumCorrectScores() {
         List<Integer> questionIds = List.of(1, 2, 3);
         List<QuestionDbEntity> questions = List.of(
-                new QuestionDbEntity(1, 1, 2),
-                new QuestionDbEntity(2, 3, 1),
-                new QuestionDbEntity(3, 2, 0)
+                new QuestionDbEntity(1, 1, 1, 2),
+                new QuestionDbEntity(2, 2, 3, 1),
+                new QuestionDbEntity(3, 3, 2, 0)
         );
         when(questionRepository.getByIds(questionIds)).thenReturn(questions);
 
