@@ -13,11 +13,13 @@ import com.gehtsoft.dto.quiz.QuestionLevel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class QuizService {
@@ -30,26 +32,34 @@ public class QuizService {
     @Autowired
     private DataRepository dataRepository;
 
+    public static List<Map.Entry<Integer, String>> randomizeCorrectAnswer(DataDbEntity question) {
+        ArrayList<String> answers = new ArrayList<>();
+        answers.addAll(question.getIncorrectAnswers());
+        answers.addFirst(question.getCorrectAnswer());
+        List<Map.Entry<Integer, String>> idxWithAnswer = IntStream.range(0, answers.size())
+                .mapToObj(i -> Map.entry(i, answers.get(i)))
+                .collect(Collectors.toList());
+        Collections.shuffle(idxWithAnswer);
+        return idxWithAnswer;
+    }
+
+    //TODO: optimize with batch insert
     public List<GetQuestionResponseBody> getQuestions(
             QuestionLevel questionsLevel,
             int questionsNum
     ) {
         List<DataDbEntity> response = dataRepository.getRandomN(questionsNum, questionsLevel);
-        List<AbstractMap.SimpleEntry<QuestionDbEntity, GetQuestionResponseBody>> entities =
-                response.stream().map(q -> {
-                            List<Map.Entry<Integer, String>> mixedAnswers = QuestionDbEntity.randomizeCorrectAnswer(q);
-                            int correctAnswerIdx = mixedAnswers.stream().map(Map.Entry::getKey).toList().indexOf(0);
-                            int questionIdx = q.getId();
-                            List<String> answers = mixedAnswers.stream().map(Map.Entry::getValue).toList();
-                            return new AbstractMap.SimpleEntry<>(
-                                    new QuestionDbEntity(questionIdx, correctAnswerIdx, questionsLevel),
-                                    new GetQuestionResponseBody(q.getQuestion(), questionIdx, answers)
-                            );
-                        }
-                ).toList();
-        List<QuestionDbEntity> questionEntities = entities.stream().map(AbstractMap.SimpleEntry::getKey).toList();
-        questionRepository.save(questionEntities);
-        return entities.stream().map(AbstractMap.SimpleEntry::getValue).toList();
+        return response.stream().map(q -> {
+                    List<Map.Entry<Integer, String>> mixedAnswers = randomizeCorrectAnswer(q);
+                    int correctAnswerIdx = mixedAnswers.stream().map(Map.Entry::getKey).toList().indexOf(0);
+                    int questionIdx = q.getId();
+                    List<String> answers = mixedAnswers.stream().map(Map.Entry::getValue).toList();
+                    QuestionDbEntity insertedQuestion = questionRepository.save(
+                            new QuestionDbEntity(questionIdx, correctAnswerIdx, questionsLevel)
+                    );
+                    return new GetQuestionResponseBody(q.getQuestion(), insertedQuestion.getId(), answers);
+                }
+        ).toList();
     }
 
     public CheckAnswersResponseBody checkAnswers(CheckAnswersRequestBody postAnswers) {
@@ -57,7 +67,7 @@ public class QuizService {
                 .map(CheckAnswersRequestBody.Answer::getQuestionId).toList();
         Map<Integer, QuestionDbEntity> dbQuestions = questionRepository.getByIds(questionIds)
                 .stream()
-                .collect(Collectors.toMap(QuestionDbEntity::getQuestionId, Function.identity()));
+                .collect(Collectors.toMap(QuestionDbEntity::getId, Function.identity()));
         int maxScore = dbQuestions.values()
                 .stream()
                 .mapToInt(QuestionDbEntity::getCorrectAnswerScore)
