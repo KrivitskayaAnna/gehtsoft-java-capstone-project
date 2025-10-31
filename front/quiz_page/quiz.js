@@ -213,12 +213,30 @@ class QuizPage {
   }
 
   async sendAnswersToBackend(submissionData) {
+    //Делаем предварительный запрос для установки CSRF токена в куках
+    const csrf_response = await fetch("/api/quiz/csrf", {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+    if (!csrf_response.ok) {
+      throw new Error(
+        `HTTP error while getting csrf token! status: ${csrf_response.status}`
+      );
+    }
+    const csrfToken = await csrf_response.text();
+
     const response = await fetch("/api/quiz/check", {
       method: "POST",
       headers: {
         accept: "application/json",
         "Content-Type": "application/json",
+        "X-XSRF-TOKEN": csrfToken,
       },
+      credentials: "include",
       body: JSON.stringify(submissionData),
     });
 

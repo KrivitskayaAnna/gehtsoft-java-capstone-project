@@ -75,6 +75,7 @@ curl -X 'GET' \
 curl -X 'POST' \
    'http://localhost:8080/api/quiz/check' \
    -H 'accept: application/json' \
+   -H 'X-XSRF-TOKEN: w6vBhR6Rgb6DYDI26HLjyfvurOAiU7XyLAmE4OrYW8aZ6rrc856kty-j44quBgAE2V_X8MPcgdgUMYXfSjCxgtK9bvap2oK-' \
    -H 'Content-Type: application/json' \
    -d '{
    "playerName": "Ann",
@@ -88,7 +89,7 @@ curl -X 'POST' \
    "answerIdx": 2
    }
    ]
-   }'
+   }' -b cookies.txt -c cookies.txt
 
 3) GET /api/leaderboard
 curl -X 'GET' \
