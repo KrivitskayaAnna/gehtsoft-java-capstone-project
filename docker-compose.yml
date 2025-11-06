@@ -44,8 +44,8 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
-      - ./opentdb_data.json:/data/opentdb_data.json
+      - ./back/src/main/resources/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+      - ./back/src/main/resources/opentdb_data.json:/data/opentdb_data.json
     networks:
       - app-network
 
@@ -57,8 +57,6 @@ services:
       - xpack.security.enrollment.enabled=false
     ports:
       - "9200:9200"
-    volumes:
-      - elasticsearch_data:/usr/share/elasticsearch/data
     networks:
       - app-network
 
@@ -70,8 +68,8 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./grafana/provisioning:/etc/grafana/provisioning
-      - ./grafana/dashboards:/etc/grafana/dashboards
+      - ./back/src/main/resources/grafana/provisioning:/etc/grafana/provisioning
+      - ./back/src/main/resources/grafana/dashboards:/etc/grafana/dashboards
     networks:
       - app-network
 
@@ -80,7 +78,7 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./back/src/main/resources/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
     depends_on:
       - elasticsearch
     networks:
