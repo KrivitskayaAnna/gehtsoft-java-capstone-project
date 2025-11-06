@@ -47,7 +47,7 @@ jobs:
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: root
-          key: ${{ secrets.SERVER_SSH_KEY }} 
+          key: ${{ secrets.SERVER_SSH_KEY }}
           source: "custom-backend.tar.gz,custom-frontend.tar.gz,github-compose.yml,back/src/main/resources/init_db.sql,back/src/main/resources/opentdb_data.json,back/src/main/resources/grafana,back/src/main/resources/logstash"
           target: "/opt/webserver"
 
