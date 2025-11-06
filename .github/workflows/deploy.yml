@@ -72,7 +72,6 @@ jobs:
             # Start all services
             docker-compose up -d
             
-            # Wait for services to be ready
             sleep 30
             
             # Check status
