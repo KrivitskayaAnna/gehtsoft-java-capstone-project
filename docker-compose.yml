@@ -1,6 +1,6 @@
 services:
   backend:
-    build: ./back
+    image: custom-backend:latest
     container_name: custom-backend
     ports:
       - "8080:8080"
@@ -19,7 +19,7 @@ services:
         max-file: "3"
 
   frontend:
-    build: ./front
+    image: custom-frontend:latest
     container_name: custom-frontend
     ports:
       - "3002:3002"
