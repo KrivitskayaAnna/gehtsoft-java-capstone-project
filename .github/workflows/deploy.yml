@@ -70,7 +70,7 @@ jobs:
             docker-compose pull postgres elasticsearch grafana logstash
             
             # Start all services
-            docker-compose up -d
+            docker-compose -f github-compose.yml up -d
             
             sleep 30
             
