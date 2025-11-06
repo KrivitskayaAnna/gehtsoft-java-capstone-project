@@ -1,6 +1,39 @@
-version: '3.8'
-
 services:
+  backend:
+    build: ./back
+    container_name: custom-backend
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    environment:
+      - JAVA_OPTS=-Xmx512m
+    depends_on:
+      - postgres
+      - elasticsearch
+    networks:
+      - app-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  frontend:
+    build: ./front
+    container_name: custom-frontend
+    ports:
+      - "3002:3002"
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
   postgres:
     image: postgres:16-alpine
     restart: always
@@ -11,10 +44,11 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./back/src/main/resources/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
-      - ./back/src/main/resources/opentdb_data.json:/data/opentdb_data.json
+      - ./init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+      - ./opentdb_data.json:/data/opentdb_data.json
     networks:
       - app-network
+
   elasticsearch:
     image: elasticsearch:8.11.0
     environment:
@@ -23,8 +57,11 @@ services:
       - xpack.security.enrollment.enabled=false
     ports:
       - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
     networks:
       - app-network
+
   grafana:
     image: grafana/grafana:latest
     environment:
@@ -33,20 +70,25 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./back/src/main/resources/grafana/provisioning:/etc/grafana/provisioning
-      - ./back/src/main/resources/grafana/dashboards:/etc/grafana/dashboards
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/etc/grafana/dashboards
     networks:
       - app-network
+
   logstash:
     image: logstash:8.19.5
     ports:
       - "5000:5000"
     volumes:
-      - ./back/src/main/resources/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
     depends_on:
       - elasticsearch
     networks:
       - app-network
+
+volumes:
+  postgres_data:
+  elasticsearch_data:
 
 networks:
   app-network:
