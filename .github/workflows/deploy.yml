@@ -67,12 +67,13 @@ jobs:
             docker-compose down
             
             # Pull latest infrastructure images
-            docker-compose pull postgres elasticsearch grafana logstash
+            docker-compose pull postgres 
+            #elasticsearch grafana logstash
             
             # Start all services
             docker-compose up -d
             
-            sleep 30
+            sleep 10
             
             # Check status
             echo "=== Running containers ==="
