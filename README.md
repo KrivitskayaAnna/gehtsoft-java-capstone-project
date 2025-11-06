@@ -106,7 +106,7 @@ curl -X 'GET' \
 - npm install express cors http-proxy-middleware
 - node server.js
 
-2) go to http://localhost:3001/form_page/form.html
+2) go to http://localhost:3002/form_page/form.html
 
 #### unit testing
 
