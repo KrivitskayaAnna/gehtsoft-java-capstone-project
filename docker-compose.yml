@@ -9,7 +9,6 @@ services:
       - JAVA_OPTS=-Xmx512m
     depends_on:
       - postgres
-      - elasticsearch
     networks:
       - app-network
     logging:
@@ -24,8 +23,6 @@ services:
     ports:
       - "3002:3002"
     restart: unless-stopped
-    depends_on:
-      - backend
     networks:
       - app-network
     logging:

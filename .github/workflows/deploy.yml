@@ -75,6 +75,9 @@ jobs:
             sleep 30
             
             # Check status
+            echo "=== Running containers ==="
             docker ps
-            docker logs custom-backend
-            docker logs custom-frontend
+            echo "=== Backend logs ==="
+            docker logs custom-backend --tail 50
+             echo "=== Frontend logs ==="
+            docker logs custom-frontend --tail 50
