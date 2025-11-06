@@ -16,7 +16,7 @@ app.use(express.static(__dirname));
 app.use(
   "/api",
   createProxyMiddleware({
-    target: "http://localhost:8080",
+    target: "http://custom-backend:8080",
     changeOrigin: true,
     pathRewrite: {
       "^/api": "/api", // keep the /api prefix
