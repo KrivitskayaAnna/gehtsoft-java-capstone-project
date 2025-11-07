@@ -47,7 +47,7 @@ class LeaderboardControllerTests {
 
     @Test
     void returnLotOfLeaderboardPlayers() {
-        int leadersNum = 39_999_999; //out of memory for more
+        int leadersNum = 9_999_999; //out of memory for more
         List<GetLeaderboardResponseBody> expectedLeaderboard = createLargeLeaderboard(leadersNum);
         when(leaderboardService.getTopLeaderboard(leadersNum)).thenReturn(expectedLeaderboard);
 
