@@ -28,7 +28,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class QuizServiceSpec {
+class QuizServiceTests {
     @Mock
     private QuestionRepository questionRepository;
 
