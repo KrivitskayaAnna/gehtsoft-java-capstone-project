@@ -109,6 +109,12 @@ curl -X 'GET' \
 2) go to http://localhost:3002/form_page/form.html
 
 #### unit testing
+mvn clean test
 
 #### load testing
 k6 run k6Tests.js
+
+#### deployment prerequisites
+VPS with at least 
+- 2 Gb RAM (for deploying postgres, back, front)
+- 4 Gb RAM (for deploying postgres, back, front, ELK)
