@@ -117,4 +117,9 @@ k6 run k6Tests.js
 #### deployment prerequisites
 VPS with at least 
 - 2 Gb RAM (for deploying postgres, back, front)
-- 4 Gb RAM (for deploying postgres, back, front, ELK)
+- 6 Gb RAM (for deploying postgres, back, front, ELK) <br>
+
+Remote resources:
+- front: http://91.229.11.126:3002/form_page/form.html
+- back: http://91.229.11.126:8080/swagger-ui/index.html
+- grafana: http://91.229.11.126:3000/login
