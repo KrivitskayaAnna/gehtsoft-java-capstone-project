@@ -28,11 +28,6 @@ app.use(
   })
 );
 
-// // For all other routes, serve the index.html (SPA support)
-// app.get("*", (req, res) => {
-//   res.sendFile(path.join(__dirname, "form_page/form.html"));
-// });
-
 app.listen(PORT, () => {
   console.log(
     `🎯 Frontend server running on http://localhost:${PORT}, with entrypoint on /form_page/form.html`

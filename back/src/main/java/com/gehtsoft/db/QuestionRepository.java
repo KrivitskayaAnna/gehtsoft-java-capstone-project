@@ -3,12 +3,11 @@ package com.gehtsoft.db;
 import com.gehtsoft.db.model.QuestionDbEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -30,23 +29,38 @@ public class QuestionRepository {
         }
     }
 
-    //TODO: batch insert with returning
-    public QuestionDbEntity save(QuestionDbEntity question) {
-        String sql = "INSERT INTO quiz.question (question_id, correct_answer_score, correct_answer_idx) " +
-                "VALUES (:questionId, :correctAnswerScore, :correctAnswerIdx) RETURNING id";
-
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("questionId", question.getQuestionId());
-        params.addValue("correctAnswerScore", question.getCorrectAnswerScore());
-        params.addValue("correctAnswerIdx", question.getCorrectAnswerIdx());
-
-        Integer generatedId = jdbcTemplate.queryForObject(sql, params, Integer.class);
-        QuestionDbEntity savedQuestion = new QuestionDbEntity(
-                question.getQuestionId(),
-                question.getCorrectAnswerIdx(),
-                question.getCorrectAnswerScore());
-        savedQuestion.setId(generatedId);
-        return savedQuestion;
+    public List<QuestionDbEntity> save(List<QuestionDbEntity> questions) {
+        String sql = "INSERT INTO quiz.question (question_id, correct_answer_score, correct_answer_idx) VALUES (?, ?, ?)";
+        List<Integer> generatedIds = new ArrayList<>();
+        jdbcTemplate.getJdbcTemplate().execute((Connection connection) -> {
+            try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                for (QuestionDbEntity question : questions) {
+                    ps.setInt(1, question.getQuestionId());
+                    ps.setInt(2, question.getCorrectAnswerScore());
+                    ps.setInt(3, question.getCorrectAnswerIdx());
+                    ps.addBatch();
+                }
+                ps.executeBatch();
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    while (rs.next()) {
+                        generatedIds.add(rs.getInt(1));
+                    }
+                }
+                return null;
+            }
+        });
+        List<QuestionDbEntity> savedQuestions = new ArrayList<>();
+        for (int i = 0; i < questions.size(); i++) {
+            QuestionDbEntity original = questions.get(i);
+            QuestionDbEntity saved = new QuestionDbEntity(
+                    original.getQuestionId(),
+                    original.getCorrectAnswerIdx(),
+                    original.getCorrectAnswerScore()
+            );
+            saved.setId(generatedIds.get(i));
+            savedQuestions.add(saved);
+        }
+        return savedQuestions;
     }
 
     public List<QuestionDbEntity> getByIds(List<Integer> questionIds) {

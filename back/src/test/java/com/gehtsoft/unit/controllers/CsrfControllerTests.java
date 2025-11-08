@@ -75,7 +75,7 @@ class CsrfControllerTests {
     @Test
     void returnLongToken() {
         CsrfToken csrfToken = mock(CsrfToken.class);
-        String longToken = "a".repeat(999_999_999); //out of memory for longer
+        String longToken = "a".repeat(99_999_999); //out of memory for longer
         when(request.getAttribute("_csrf")).thenReturn(csrfToken);
         when(csrfToken.getToken()).thenReturn(longToken);
 
@@ -83,7 +83,7 @@ class CsrfControllerTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo(longToken);
-        assertThat(response.getBody()).hasSize(999_999_999);
+        assertThat(response.getBody()).hasSize(99_999_999);
     }
 
     @Test
