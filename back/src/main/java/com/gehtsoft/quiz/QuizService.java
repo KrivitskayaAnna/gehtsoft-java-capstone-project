@@ -43,23 +43,29 @@ public class QuizService {
         return idxWithAnswer;
     }
 
-    //TODO: optimize with batch insert
     public List<GetQuestionResponseBody> getQuestions(
             QuestionLevel questionsLevel,
             int questionsNum
     ) {
         List<DataDbEntity> response = dataRepository.getRandomN(questionsNum, questionsLevel);
-        return response.stream().map(q -> {
-                    List<Map.Entry<Integer, String>> mixedAnswers = randomizeCorrectAnswer(q);
-                    int correctAnswerIdx = mixedAnswers.stream().map(Map.Entry::getKey).toList().indexOf(0);
-                    int questionIdx = q.getId();
-                    List<String> answers = mixedAnswers.stream().map(Map.Entry::getValue).toList();
-                    QuestionDbEntity insertedQuestion = questionRepository.save(
-                            new QuestionDbEntity(questionIdx, correctAnswerIdx, questionsLevel)
-                    );
-                    return new GetQuestionResponseBody(q.getQuestion(), insertedQuestion.getId(), answers);
-                }
-        ).toList();
+        List<QuestionDbEntity> questionsToSave = new ArrayList<>();
+        List<List<Map.Entry<Integer, String>>> mixedAnswersList = new ArrayList<>();
+        for (DataDbEntity q : response) {
+            List<Map.Entry<Integer, String>> mixedAnswers = randomizeCorrectAnswer(q);
+            mixedAnswersList.add(mixedAnswers);
+            int correctAnswerIdx = mixedAnswers.stream().map(Map.Entry::getKey).toList().indexOf(0);
+            questionsToSave.add(new QuestionDbEntity(q.getId(), correctAnswerIdx, questionsLevel));
+        }
+        List<QuestionDbEntity> savedQuestions = questionRepository.save(questionsToSave);
+        List<GetQuestionResponseBody> result = new ArrayList<>();
+        for (int i = 0; i < response.size(); i++) {
+            DataDbEntity q = response.get(i);
+            QuestionDbEntity insertedQuestion = savedQuestions.get(i);
+            List<Map.Entry<Integer, String>> mixedAnswers = mixedAnswersList.get(i);
+            List<String> answers = mixedAnswers.stream().map(Map.Entry::getValue).toList();
+            result.add(new GetQuestionResponseBody(q.getQuestion(), insertedQuestion.getId(), answers));
+        }
+        return result;
     }
 
     public CheckAnswersResponseBody checkAnswers(CheckAnswersRequestBody postAnswers) {

@@ -23,12 +23,12 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class QuizServiceSpec {
+class QuizServiceTests {
     @Mock
     private QuestionRepository questionRepository;
 
@@ -88,9 +88,9 @@ class QuizServiceSpec {
                 new DataDbEntity(1, "Lala", "hard", "first",
                         incorrectAnswers
                 ));
-        QuestionDbEntity insertedQuestion = new QuestionDbEntity(1, 1, 1, 2);
+        List<QuestionDbEntity> insertedQuestion = List.of(new QuestionDbEntity(1, 1, 1, 2));
         when(dataRepository.getRandomN(questionsNum, questionLevel)).thenReturn(data);
-        when(questionRepository.save(any(QuestionDbEntity.class))).thenReturn(insertedQuestion);
+        when(questionRepository.save(anyList())).thenReturn(insertedQuestion);
 
         List<GetQuestionResponseBody> questions = quizService.getQuestions(questionLevel, questionsNum);
 
@@ -111,12 +111,15 @@ class QuizServiceSpec {
         DataDbEntity question1 = new DataDbEntity(1, "Lala", "hard", "first",
                 incorrectAnswers
         );
-        QuestionDbEntity insertedQuestion = new QuestionDbEntity(1, 1, 1, 2);
+        List<QuestionDbEntity> insertedQuestion = List.of(
+                new QuestionDbEntity(1, 1, 1, 2),
+                new QuestionDbEntity(1, 1, 1, 2)
+        );
         DataDbEntity question2 = SerializationUtils.clone(question1);
         question2.setId(2);
         List<DataDbEntity> data = List.of(question1, question2);
         when(dataRepository.getRandomN(questionsNum, questionLevel)).thenReturn(data);
-        when(questionRepository.save(any(QuestionDbEntity.class))).thenReturn(insertedQuestion);
+        when(questionRepository.save(anyList())).thenReturn(insertedQuestion);
         List<GetQuestionResponseBody> questions = quizService.getQuestions(questionLevel, questionsNum);
 
         assertThat(questions).hasSize(2);

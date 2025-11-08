@@ -1,0 +1,82 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: feature/deploy
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Build Backend with Maven
+        run: |
+          cd back
+          mvn clean package
+
+      - name: Build Frontend dependencies
+        run: |
+          cd front
+          npm install
+
+      - name: Build Docker images
+        run: |
+          docker build -t custom-backend:latest ./back
+          docker build -t custom-frontend:latest ./front
+
+      - name: Save Docker images
+        run: |
+          docker save custom-backend:latest | gzip > custom-backend.tar.gz
+          docker save custom-frontend:latest | gzip > custom-frontend.tar.gz
+
+      - name: Copy files to server
+        uses: appleboy/scp-action@v0.1.5
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: root
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: "custom-backend.tar.gz,custom-frontend.tar.gz,docker-compose.yml,back/src/main/resources/init_db.sql,back/src/main/resources/opentdb_data.json,back/src/main/resources/grafana,back/src/main/resources/logstash"
+          target: "/opt/webserver"
+
+      - name: Deploy on server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: root
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /opt/webserver
+            # Load application images
+            docker load < custom-backend.tar.gz
+            docker load < custom-frontend.tar.gz
+            
+            # Stop and remove all containers
+            docker-compose down
+            
+            # Pull latest infrastructure images
+            docker-compose pull postgres elasticsearch grafana logstash
+            
+            # Start all services
+            docker-compose up -d
+            
+            sleep 10
+          
+            echo "=== Running containers ==="
+            docker ps
+            echo "=== Backend logs ==="
+            docker logs custom-backend --tail 50
+             echo "=== Frontend logs ==="
+            docker logs custom-frontend --tail 50
