@@ -4,7 +4,7 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 const path = require("path");
 
 const app = express();
-const PORT = 3001;
+const PORT = 3002;
 
 // Enable CORS for all routes
 app.use(cors());
@@ -16,7 +16,7 @@ app.use(express.static(__dirname));
 app.use(
   "/api",
   createProxyMiddleware({
-    target: "http://localhost:8080",
+    target: "http://custom-backend:8080",
     changeOrigin: true,
     pathRewrite: {
       "^/api": "/api", // keep the /api prefix
@@ -27,11 +27,6 @@ app.use(
     },
   })
 );
-
-// // For all other routes, serve the index.html (SPA support)
-// app.get("*", (req, res) => {
-//   res.sendFile(path.join(__dirname, "form_page/form.html"));
-// });
 
 app.listen(PORT, () => {
   console.log(

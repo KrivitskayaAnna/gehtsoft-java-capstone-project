@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 0,
+  "id": 1,
   "links": [],
   "panels": [
     {
@@ -142,7 +142,7 @@
         "cellHeight": "sm",
         "showHeader": true
       },
-      "pluginVersion": "12.2.0",
+      "pluginVersion": "12.2.1",
       "targets": [
         {
           "alias": "",
@@ -278,7 +278,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.2.0",
+      "pluginVersion": "12.2.1",
       "targets": [
         {
           "alias": "",
@@ -398,7 +398,7 @@
         "xTickLabelRotation": 0,
         "xTickLabelSpacing": 0
       },
-      "pluginVersion": "12.2.0",
+      "pluginVersion": "12.2.1",
       "targets": [
         {
           "alias": "",
@@ -453,7 +453,38 @@
           },
           "mappings": []
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Count"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "fail"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 7,
@@ -463,12 +494,15 @@
       },
       "id": 4,
       "options": {
+        "displayLabels": [
+          "percent"
+        ],
         "legend": {
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
         },
-        "pieType": "pie",
+        "pieType": "donut",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -483,19 +517,19 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.2.0",
+      "pluginVersion": "12.2.1",
       "targets": [
         {
           "alias": "",
           "bucketAggs": [
             {
-              "field": "status.keyword",
+              "field": "level.keyword",
               "id": "3",
               "settings": {
                 "min_doc_count": "1",
                 "order": "desc",
-                "orderBy": "_term",
-                "size": "10"
+                "orderBy": "1",
+                "size": "500"
               },
               "type": "terms"
             }
@@ -510,12 +544,39 @@
               "type": "count"
             }
           ],
-          "query": "",
+          "query": "message:\"Request responded\" AND status:\"200\"",
           "refId": "A",
+          "timeField": "@timestamp"
+        },
+        {
+          "alias": "fail",
+          "bucketAggs": [
+            {
+              "field": "@timestamp",
+              "id": "2",
+              "settings": {
+                "interval": "1d"
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "datasource": {
+            "type": "elasticsearch",
+            "uid": "Elastic"
+          },
+          "hide": false,
+          "metrics": [
+            {
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "message:\"Request responded\" AND NOT status:\"200\"",
+          "refId": "B",
           "timeField": "@timestamp"
         }
       ],
-      "title": "TODO success/error requests ratio",
+      "title": "success/error requests ratio",
       "type": "piechart"
     }
   ],
@@ -533,5 +594,5 @@
   "timezone": "browser",
   "title": "back_requests",
   "uid": "adjpzpl",
-  "version": 11
+  "version": 1
 }

@@ -16,7 +16,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class CsrfControllerSpec {
+class CsrfControllerTests {
     @Mock
     private HttpServletRequest request;
 
@@ -75,7 +75,7 @@ class CsrfControllerSpec {
     @Test
     void returnLongToken() {
         CsrfToken csrfToken = mock(CsrfToken.class);
-        String longToken = "a".repeat(999999999); //out of memory for longer
+        String longToken = "a".repeat(99_999_999); //out of memory for longer
         when(request.getAttribute("_csrf")).thenReturn(csrfToken);
         when(csrfToken.getToken()).thenReturn(longToken);
 
@@ -83,7 +83,7 @@ class CsrfControllerSpec {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo(longToken);
-        assertThat(response.getBody()).hasSize(999999999);
+        assertThat(response.getBody()).hasSize(99_999_999);
     }
 
     @Test

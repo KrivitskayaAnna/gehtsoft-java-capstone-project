@@ -24,7 +24,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class QuizControllerSpec {
+class QuizControllerTests {
 
     @Mock
     private QuizService quizService;
@@ -54,7 +54,7 @@ class QuizControllerSpec {
     @Test
     void returnLotOfQuestions() {
         QuestionLevel level = QuestionLevel.easy;
-        int questionsNum = 19_999_999; //out of memory for more
+        int questionsNum = 1_999_999; //out of memory for more
         List<GetQuestionResponseBody> expectedQuestions = createLargeQuestionsOutput(questionsNum);
 
         when(quizService.getQuestions(level, questionsNum)).thenReturn(expectedQuestions);
@@ -131,7 +131,7 @@ class QuizControllerSpec {
 
     @Test
     void checkLotOfQuestions() {
-        int questionCount = 19_999_999; //out of memory for more
+        int questionCount = 1_999_999; //out of memory for more
         CheckAnswersRequestBody largeRequest = createLargeCheckRequest(questionCount);
         CheckAnswersResponseBody largeResponse = createLargeCheckResponse(questionCount);
 
