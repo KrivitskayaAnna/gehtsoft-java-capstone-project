@@ -72,7 +72,7 @@ curl -X 'GET' \
    -H 'accept: application/json'
 
 2) POST /api/quiz/check
-curl -X 'POST' \
+curl -vvv -X 'POST' \
    'http://localhost:8080/api/quiz/check' \
    -H 'accept: application/json' \
    -H 'Content-Type: application/json' \
@@ -88,7 +88,7 @@ curl -X 'POST' \
    "answerIdx": 2
    }
    ]
-   }'
+   }' -b cookies.txt -c cookies.txt
 
 3) GET /api/leaderboard
 curl -X 'GET' \
@@ -107,3 +107,8 @@ curl -X 'GET' \
 - node server.js
 
 2) go to http://localhost:3001/form_page/form.html
+
+#### unit testing
+
+#### load testing
+k6 run k6Tests.js
