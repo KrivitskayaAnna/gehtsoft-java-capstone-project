@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Game - Start</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Let's play a quiz!</h1>
+            <p>Please, fill the form to start</p>
+        </header>
+
+        <main>
+            <div class="quiz-form-container">
+                <form id="quizForm" class="quiz-form">
+                    <div class="form-group">
+                        <label for="nickname">Your name:</label>
+                        <input 
+                            type="text" 
+                            id="nickname" 
+                            name="nickname" 
+                            required 
+                            maxlength="20"
+                            placeholder="Enter your nickname"
+                        >
+                        <span class="error-message" id="nicknameError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="questionCount">Questions number:</label>
+                        <input 
+                            type="number" 
+                            id="questionCount" 
+                            name="questionCount" 
+                            required 
+                            min="1" 
+                            max="100"
+                            value="10"
+                        >
+                        <span class="error-message" id="questionCountError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="difficulty">Questions level:</label>
+                        <select id="difficulty" name="difficulty" required>
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                        <span class="error-message" id="difficultyError"></span>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        submit
+                    </button>
+                </form>
+            </div>
+
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>Loading questions...</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="form.js"></script>
+</body>
+</html>

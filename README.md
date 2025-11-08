@@ -17,18 +17,21 @@ After completing the quiz, the result is shown and the overall quiz leaderboard 
   medium,
   and 3 for hard) into the database.
 
-- POST /api/quiz/check/{playerName} <br>
+- POST /api/quiz/check <br>
   Receives the player's answers, checks them for correctness, and returns the player's overall quiz score.
   Saves it into the database.
 
-- GET /api/leaderboard <br>
-  Returns the current top 5 players leaderboard - player name, total score, and their place on the leaderboard.
+- GET /api/leaderboard?leadersNum={3} <br>
+  Returns the current top-3 players leaderboard - player name, total score, and their place on the leaderboard.
+
+- GET /api/leaderboard/{playerName} <br>
+  Returns the current total score and place on the leaderboard for specified player.
 
 2. Implement javascript frontend with pages (see front/prototype/capstone-ui-prototype.png):
 
 - quiz starter page <br>
   Contains a form that a player should fill in to start the game:
-  playerName (English alphabet and numbers), questionsNum (1 to 10), questionsLevel (easy/medium/hard)
+  playerName (English alphabet and numbers), questionsNum (1 to 100), questionsLevel (easy/medium/hard)
 
 - quiz page <br>
   The page the player is redirected to after submitting the starter form.
@@ -37,16 +40,14 @@ After completing the quiz, the result is shown and the overall quiz leaderboard 
   There is also a button "go to the leaderboard".
 
 - leaderboard page <br>
-  The final page the player is taken to after clicking "go to the leaderboard" showing the top 5 players ordered by
-  their
-  total score in all games.
+  The final page the player is taken to after clicking "go to the leaderboard" showing the top 3 players ordered by their total score in all games and current player's position (if current player is not in the top-3).
   There is also a button "start new quiz" that redirects the player to the starter page.
 
 ### Stack
 
 #### backend
 
-- java spring, jdbc
+- java spring, jdbc template
 - postgres
 - rest api
 
@@ -58,6 +59,67 @@ After completing the quiz, the result is shown and the overall quiz leaderboard 
 
 #### external resources
 
-Quiz questions are taken from Open Trivia Database https://opentdb.com <br>
-Sample curl: https://opentdb.com/api.php?amount=3&difficulty=easy
+Quiz questions are originally taken from Open Trivia Database https://opentdb.com <br>
 
+#### backend local curls
+
+0) Swagger
+Available at http://localhost:8080/swagger-ui/index.html
+
+1) GET /api/quiz
+curl -X 'GET' \
+   'http://localhost:8080/api/quiz?questionsLevel=easy&questionsNum=2' \
+   -H 'accept: application/json'
+
+2) POST /api/quiz/check
+curl -vvv -X 'POST' \
+   'http://localhost:8080/api/quiz/check' \
+   -H 'accept: application/json' \
+   -H 'Content-Type: application/json' \
+   -d '{
+   "playerName": "Ann",
+   "answers": [
+   {
+   "questionId": 29,
+   "answerIdx": 3
+   },
+   {
+   "questionId": 30,
+   "answerIdx": 2
+   }
+   ]
+   }' -b cookies.txt -c cookies.txt
+
+3) GET /api/leaderboard
+curl -X 'GET' \
+   'http://localhost:8080/api/leaderboard?leadersNum=3' \
+   -H 'accept: application/json'
+
+4) GET /api/leaderboard/{playerName}
+ curl -X 'GET' \
+   'http://localhost:8080/api/leaderboard/Ann' \
+   -H 'accept: application/json'
+
+#### frontend launch
+1) execute from front sub-directory:
+- npm init -y
+- npm install express cors http-proxy-middleware
+- node server.js
+
+2) go to http://localhost:3002/form_page/form.html
+
+#### unit testing
+mvn clean test
+
+#### load testing
+k6 run k6Tests.js
+
+#### deployment prerequisites
+VPS with at least 
+- 2 Gb RAM (for deploying postgres, back, front)
+- 6 Gb RAM (for deploying postgres, back, front, ELK) <br>
+
+Remote resources:
+- front: http://91.229.11.126:3002/form_page/form.html
+- back: http://91.229.11.126:8080/swagger-ui/index.html
+- grafana: http://91.229.11.126:3000/login
