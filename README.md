@@ -72,10 +72,9 @@ curl -X 'GET' \
    -H 'accept: application/json'
 
 2) POST /api/quiz/check
-curl -X 'POST' \
+curl -vvv -X 'POST' \
    'http://localhost:8080/api/quiz/check' \
    -H 'accept: application/json' \
-   -H 'X-XSRF-TOKEN: w6vBhR6Rgb6DYDI26HLjyfvurOAiU7XyLAmE4OrYW8aZ6rrc856kty-j44quBgAE2V_X8MPcgdgUMYXfSjCxgtK9bvap2oK-' \
    -H 'Content-Type: application/json' \
    -d '{
    "playerName": "Ann",
@@ -108,3 +107,8 @@ curl -X 'GET' \
 - node server.js
 
 2) go to http://localhost:3001/form_page/form.html
+
+#### unit testing
+
+#### load testing
+k6 run k6Tests.js
